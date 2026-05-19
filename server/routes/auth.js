@@ -4,7 +4,6 @@ const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const { authMiddleware } = require('../middleware/auth');
 
-// Регистрация
 router.post('/register', async (req, res) => {
   try {
     const { name, email, password } = req.body;
@@ -32,7 +31,6 @@ router.post('/register', async (req, res) => {
   }
 });
 
-// Вход
 router.post('/login', async (req, res) => {
   try {
     const { email, password } = req.body;
@@ -68,7 +66,6 @@ router.post('/login', async (req, res) => {
   }
 });
 
-// Мои комментарии
 router.get('/my-comments', authMiddleware, async (req, res) => {
   try {
     const [rows] = await db.query(
@@ -85,7 +82,6 @@ router.get('/my-comments', authMiddleware, async (req, res) => {
   }
 });
 
-// Обновить профиль
 router.put('/profile', authMiddleware, async (req, res) => {
   try {
     const { name, email, currentPassword, newPassword } = req.body;
@@ -117,11 +113,8 @@ router.put('/profile', authMiddleware, async (req, res) => {
   }
 });
 
-// Удалить аккаунт
 router.delete('/profile', authMiddleware, async (req, res) => {
   try {
-    if (req.user.role === 'Admin')
-      return res.status(403).json({ message: 'Администратор не может удалить собственный аккаунт' });
     await db.query('DELETE FROM users WHERE id_user = ?', [req.user.id]);
     res.json({ message: 'Аккаунт удалён' });
   } catch (err) {

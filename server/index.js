@@ -7,10 +7,8 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-// Статические файлы (загруженные фото)
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
-// Роуты API
 app.use('/api/auth', require('./routes/auth'));
 app.use('/api/recipes', require('./routes/recipes'));
 app.use('/api/categories', require('./routes/categories'));

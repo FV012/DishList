@@ -4,7 +4,6 @@ const { authMiddleware, requireRole } = require('../middleware/auth');
 
 const adminOnly = [authMiddleware, requireRole('Admin')];
 
-// Список пользователей
 router.get('/users', ...adminOnly, async (req, res) => {
   try {
     const [rows] = await db.query(`
@@ -18,7 +17,6 @@ router.get('/users', ...adminOnly, async (req, res) => {
   }
 });
 
-// Заблокировать / разблокировать пользователя
 router.put('/users/:id/block', ...adminOnly, async (req, res) => {
   try {
     if (Number(req.params.id) === req.user.id)
@@ -31,7 +29,6 @@ router.put('/users/:id/block', ...adminOnly, async (req, res) => {
   }
 });
 
-// Изменить роль пользователя
 router.put('/users/:id/role', ...adminOnly, async (req, res) => {
   try {
     const { id_role } = req.body;
@@ -42,7 +39,6 @@ router.put('/users/:id/role', ...adminOnly, async (req, res) => {
   }
 });
 
-// Удалить пользователя
 router.delete('/users/:id', ...adminOnly, async (req, res) => {
   try {
     await db.query('DELETE FROM users WHERE id_user=?', [req.params.id]);
@@ -52,7 +48,6 @@ router.delete('/users/:id', ...adminOnly, async (req, res) => {
   }
 });
 
-// Все комментарии (для модерации) с фильтрацией
 router.get('/comments', ...adminOnly, async (req, res) => {
   try {
     const { user, recipe, date_from, date_to } = req.query;
@@ -92,7 +87,6 @@ router.get('/comments', ...adminOnly, async (req, res) => {
   }
 });
 
-// Удалить комментарий
 router.delete('/comments/:id', ...adminOnly, async (req, res) => {
   try {
     await db.query('DELETE FROM comments_on_recipes WHERE id_comment=?', [req.params.id]);
@@ -102,7 +96,6 @@ router.delete('/comments/:id', ...adminOnly, async (req, res) => {
   }
 });
 
-// Статистика
 router.get('/stats', ...adminOnly, async (req, res) => {
   try {
     const [[{ recipes }]] = await db.query('SELECT COUNT(*) AS recipes FROM recipes');
@@ -115,7 +108,6 @@ router.get('/stats', ...adminOnly, async (req, res) => {
   }
 });
 
-// Список ролей
 router.get('/roles', ...adminOnly, async (req, res) => {
   try {
     const [rows] = await db.query('SELECT * FROM roles');

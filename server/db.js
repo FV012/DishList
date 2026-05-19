@@ -13,7 +13,6 @@ const pool = mysql.createPool({
   timezone: '+00:00',
 });
 
-// SET NAMES utf8mb4 для каждого соединения из пула
 pool.on('connection', (conn) => {
   conn.query("SET NAMES utf8mb4 COLLATE utf8mb4_unicode_ci");
 });

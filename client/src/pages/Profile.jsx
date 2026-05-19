@@ -22,8 +22,13 @@ export default function Profile() {
   const [editCommentText, setEditCommentText] = useState('');
   const [editCommentError, setEditCommentError] = useState('');
 
+  const canSeeRecipes = user.role === 'Admin' || user.role === 'Editor';
+
   const [searchParams, setSearchParams] = useSearchParams();
-  const tab = searchParams.get('tab') || 'recipes';
+  const rawTab = searchParams.get('tab') || '';
+  const tab = (!rawTab || (rawTab === 'recipes' && !canSeeRecipes))
+    ? (canSeeRecipes ? 'recipes' : 'favorites')
+    : rawTab;
   const setTab = (key) => setSearchParams({ tab: key }, { replace: true });
 
   const [recipeSearch, setRecipeSearch]   = useState('');
@@ -140,7 +145,7 @@ export default function Profile() {
 
       <div className="profile-tabs">
         {[
-          { key: 'recipes', label: 'Мои рецепты' },
+          ...(canSeeRecipes ? [{ key: 'recipes', label: 'Мои рецепты' }] : []),
           { key: 'favorites', label: 'Избранное' },
           { key: 'comments', label: 'Комментарии' },
           { key: 'settings', label: 'Настройки' },
@@ -296,15 +301,13 @@ export default function Profile() {
           </button>
         </div>
 
-        {user.role !== 'Admin' && (
-          <div className="danger-zone danger-zone--delete">
-            <h3>Удаление аккаунта</h3>
-            <p>Это действие необратимо. Все ваши рецепты, комментарии и оценки будут удалены.</p>
-            <button type="button" className="btn btn--danger" onClick={handleDeleteAccount}>
-              Удалить аккаунт
-            </button>
-          </div>
-        )}
+        <div className="danger-zone danger-zone--delete">
+          <h3>Удаление аккаунта</h3>
+          <p>Это действие необратимо. Все ваши рецепты, комментарии и оценки будут удалены.</p>
+          <button type="button" className="btn btn--danger" onClick={handleDeleteAccount}>
+            Удалить аккаунт
+          </button>
+        </div>
       </section>
       )}
 

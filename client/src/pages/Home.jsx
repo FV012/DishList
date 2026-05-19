@@ -8,7 +8,6 @@ const PAGE_SIZE = 12;
 export default function Home() {
   const [searchParams, setSearchParams] = useSearchParams();
 
-  // Все фильтры живут в URL — сохраняются при навигации назад
   const search   = searchParams.get('search')      || '';
   const catsStr  = searchParams.get('categories')  || '';
   const ingsStr  = searchParams.get('ingredients') || '';
@@ -30,7 +29,6 @@ export default function Home() {
     }, { replace: true });
   }, [setSearchParams]);
 
-  // UI-состояние панелей — открытое состояние хранится в sessionStorage
   const [allCategories, setAllCategories]   = useState([]);
   const [allIngredients, setAllIngredients] = useState([]);
   const [catsOpen, setCatsOpen] = useState(() => sessionStorage.getItem('catsOpen') === '1');
@@ -46,7 +44,6 @@ export default function Home() {
     api.get('/ingredients').then(r => setAllIngredients(r.data)).catch(() => {});
   }, []);
 
-  // Состояние рецептов
   const [recipes, setRecipes]         = useState([]);
   const [hasMore, setHasMore]         = useState(false);
   const [loading, setLoading]         = useState(true);
@@ -64,10 +61,8 @@ export default function Home() {
     return p;
   }, [search, catsStr, ingsStr, max_time, sort]);
 
-  // Сброс и загрузка первой страницы при изменении фильтров
   useEffect(() => {
     setOffset(0);
-    // Первый рендер (recipes пуст) — полный loading; смена фильтра — тихое обновление
     const firstLoad = recipes.length === 0;
     if (firstLoad) setLoading(true);
     else setFiltering(true);
@@ -85,7 +80,6 @@ export default function Home() {
         setFiltering(false);
       });
     return () => { cancelled = true; };
-  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [buildParams]);
 
   const handleLoadMore = () => {

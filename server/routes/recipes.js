@@ -13,13 +13,11 @@ const storage = multer.diskStorage({
 });
 const upload = multer({ storage, limits: { fileSize: 10 * 1024 * 1024 } });
 
-// Загрузка фото
 router.post('/upload', authMiddleware, upload.single('photo'), (req, res) => {
   if (!req.file) return res.status(400).json({ message: 'Файл не загружен' });
   res.json({ filename: req.file.filename });
 });
 
-// Список рецептов с фильтрами
 router.get('/', async (req, res) => {
   try {
     const { search, categories, ingredients, max_time, sort, author_id } = req.query;
@@ -98,7 +96,6 @@ router.get('/', async (req, res) => {
   }
 });
 
-// Детальная карточка рецепта
 router.get('/:id', async (req, res) => {
   try {
     const id = req.params.id;
@@ -148,7 +145,6 @@ router.get('/:id', async (req, res) => {
   }
 });
 
-// Создание рецепта (Editor, Admin)
 router.post('/', authMiddleware, requireRole('Editor', 'Admin'), async (req, res) => {
   const conn = await db.getConnection();
   try {
@@ -204,14 +200,12 @@ router.post('/', authMiddleware, requireRole('Editor', 'Admin'), async (req, res
   }
 });
 
-// Редактирование рецепта (Editor — только свои; Admin — любой)
 router.put('/:id', authMiddleware, requireRole('Editor', 'Admin'), async (req, res) => {
   const conn = await db.getConnection();
   try {
     await conn.beginTransaction();
     const id = req.params.id;
 
-    // Редактор может менять только свои рецепты
     if (req.user.role === 'Editor') {
       const [[rec]] = await conn.query('SELECT id_user FROM recipes WHERE id_recipe=?', [id]);
       if (!rec) return res.status(404).json({ message: 'Рецепт не найден' });
@@ -265,7 +259,6 @@ router.put('/:id', authMiddleware, requireRole('Editor', 'Admin'), async (req, r
   }
 });
 
-// Удаление рецепта (Editor — только свои; Admin — любой)
 router.delete('/:id', authMiddleware, requireRole('Editor', 'Admin'), async (req, res) => {
   try {
     if (req.user.role === 'Editor') {
@@ -281,7 +274,6 @@ router.delete('/:id', authMiddleware, requireRole('Editor', 'Admin'), async (req
   }
 });
 
-// Добавить комментарий
 router.post('/:id/comments', authMiddleware, async (req, res) => {
   try {
     const { comment_text } = req.body;
@@ -296,7 +288,6 @@ router.post('/:id/comments', authMiddleware, async (req, res) => {
   }
 });
 
-// Редактировать комментарий (только свой)
 router.put('/:id/comments/:commentId', authMiddleware, async (req, res) => {
   try {
     const { comment_text } = req.body;
@@ -312,7 +303,6 @@ router.put('/:id/comments/:commentId', authMiddleware, async (req, res) => {
   }
 });
 
-// Удалить комментарий (свой или Admin)
 router.delete('/:id/comments/:commentId', authMiddleware, async (req, res) => {
   try {
     const [[com]] = await db.query('SELECT id_user FROM comments_on_recipes WHERE id_comment=?', [req.params.commentId]);
@@ -326,7 +316,6 @@ router.delete('/:id/comments/:commentId', authMiddleware, async (req, res) => {
   }
 });
 
-// Поставить или обновить оценку
 router.post('/:id/rating', authMiddleware, async (req, res) => {
   try {
     const { rating_value } = req.body;
@@ -354,7 +343,6 @@ router.post('/:id/rating', authMiddleware, async (req, res) => {
   }
 });
 
-// Получить оценку текущего пользователя для рецепта
 router.get('/:id/rating', authMiddleware, async (req, res) => {
   try {
     const [rows] = await db.query(
@@ -367,7 +355,6 @@ router.get('/:id/rating', authMiddleware, async (req, res) => {
   }
 });
 
-// Удалить оценку текущего пользователя
 router.delete('/:id/rating', authMiddleware, async (req, res) => {
   try {
     await db.query(
@@ -380,7 +367,6 @@ router.delete('/:id/rating', authMiddleware, async (req, res) => {
   }
 });
 
-// Добавить/убрать из избранного
 router.post('/:id/favorite', authMiddleware, async (req, res) => {
   try {
     const [existing] = await db.query(
@@ -399,7 +385,6 @@ router.post('/:id/favorite', authMiddleware, async (req, res) => {
   }
 });
 
-// Проверить, в избранном ли рецепт
 router.get('/:id/favorite', authMiddleware, async (req, res) => {
   try {
     const [rows] = await db.query(

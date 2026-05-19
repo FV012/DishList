@@ -80,10 +80,8 @@ export default function Admin() {
   const [stats, setStats] = useState(null);
   const [loading, setLoading] = useState(false);
 
-  // Поиск пользователей
   const [userSearch, setUserSearch] = useState('');
 
-  // Фильтры комментариев
   const [filterUser, setFilterUser]     = useState('');
   const [filterRecipe, setFilterRecipe] = useState('');
   const [filterDateFrom, setFilterDateFrom] = useState('');
@@ -111,7 +109,6 @@ export default function Admin() {
       .finally(() => setLoading(false));
   }, []);
 
-  // Перезагружать комментарии при изменении фильтров
   useEffect(() => {
     loadComments();
   }, [loadComments]);

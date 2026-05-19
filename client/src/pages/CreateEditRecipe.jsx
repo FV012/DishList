@@ -29,11 +29,9 @@ export default function CreateEditRecipe() {
   const [photoError, setPhotoError] = useState('');
   const [uploading, setUploading] = useState(false);
 
-  // Отслеживание несохранённых изменений
   const isDirty = useRef(false);
   const markDirty = useCallback(() => { isDirty.current = true; }, []);
 
-  // Предупреждение при закрытии вкладки
   useEffect(() => {
     const handler = (e) => {
       if (isDirty.current) {
