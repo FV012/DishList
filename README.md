@@ -6,9 +6,7 @@ A full-stack web application designed for cataloging, searching, and managing cu
 
 ## Screenshot
 
-![Application Interface Preview](./main-page.png)
-*Application Interface Preview*
-
+<img width="2541" height="1440" alt="main-page" src="https://github.com/user-attachments/assets/164e572b-4d02-40ab-82bc-98243e9e2434" />*Application Interface Preview*
 
 ## Tech Stack
 
